@@ -1,22 +1,24 @@
 from abc import abstractmethod, ABCMeta
 
 class Connector(metaclass =ABCMeta): 
-    def __init__(self, conn):
-        self.conn = conn 
+    def __init__(self):
+        pass
         # todo here need to create database 
-    # todo а тут блять йопта весь крад 
     @abstractmethod 
-    def _select(self, fields, table, query):
+    def select(self, fields, table, query):
         pass 
     @abstractmethod 
-    def _insert(self, data, table):
+    def insert(self, data, table):
         pass 
     @abstractmethod
-    def _update(self, data, table, query):
+    def update(self, data, table, query):
         pass 
     @abstractmethod 
-    def _delete(self, table, query):
+    def delete(self, table, query):
         pass 
+    @abstractmethod 
+    def createDatabase(self): 
+        pass
 # class MySqlConnector(Connector): 
 
 

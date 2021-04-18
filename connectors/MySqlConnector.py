@@ -4,11 +4,13 @@ from Connector import Connector
 class MySqlConnector(Connector): 
     def __init__(self, conn): 
         super().__init__(conn)
-    def _select(self, fields, table, query):
+    def select(self, fields, table, query):
         pass 
-    def _insert(self, data, table):
+    def insert(self, data, table):
         pass 
-    def _update(self, data, table, query):
+    def update(self, data, table, query):
         pass 
-    def _delete(self, table, query):
+    def delete(self, table, query):
         pass 
+    def createDatabase(self): 
+        pass
