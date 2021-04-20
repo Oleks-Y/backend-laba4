@@ -20,7 +20,9 @@ class PostgresConnector(Connector):
                                       host=dbConf["Host"], 
                                       port=dbConf["Port"],
                                     )
+        cur = self.conn.cursor()
 
+        #cur.execute("create sequence faculties_seq;")
 
     def select(self, fields, table, query):
         pass
@@ -36,43 +38,61 @@ class PostgresConnector(Connector):
 
     def createDatabase(self):
         cur = self.conn.cursor()
-        cur.execute("create sequence faculties_seq;")
-        cur.execute("create table faculties (\
-                    id bigint primary key  default nextval ('faculties_seq') ,\
-                    faculty_name varchar(20) not null ,\
-                    university_name varchar(50) not null\
-                    );")
-        cur.execute("create sequence department_seq;")
-        cur.execute("create table department (\
-                     id bigint primary key  default nextval ('department_seq'),\
-                     department_index varchar(20),\
-                     faculty_id bigint not null ,\
-                     foreign key ( faculty_id) references  faculties (id)\
-                     );")
-        cur.execute("create sequence teachers_seq;")
-        cur.execute("create table teachers (\
-                    id bigint primary key  default nextval ('teachers_seq'),\
-                    department_id bigint,\
-                    foreign key  (department_id) references  department (id),\
-                    firstname varchar(50),\
-                    lastname varchar(50),\
-                    fathername varchar(50)\
-                    );")
-        cur.execute("create sequence subject_seq;")
-        cur.execute("create table subject(\
-                     id bigint primary key default nextval ('subject_seq'),\
-                     name varchar(20)\
-                     );")
-        cur.execute("create sequence subjects_to_teachers_seq;")
-        cur.execute("create table subjects_to_teachers(\
-                     id bigint primary key default nextval ('subjects_to_teachers_seq'),\
-                     teacher_id bigint ,\
-                     subject_id bigint,\
-                     foreign key  (teacher_id) references teachers (id),\
-                     foreign key  (subject_id) references  subject (id)\
-                     );")
-        pass
 
+        #cur.execute("create sequence faculties_seq;")
+        cur.execute("""create table faculties (
+                    id bigint primary key NOT NULL,
+                    faculty_name varchar(20) NOT NULL,
+                    university_name varchar(50) NOT NULL
+                    );""")
+        #cur.execute("create sequence department_seq;")
+        cur.execute("""create table department (
+                     id bigint primary key NOT NULL,
+                     department_index varchar(20) NOT NULL,
+                     faculty_id bigint NOT NULL ,
+                     foreign key ( faculty_id) references  faculties (id)
+                     );""")
+        #cur.execute("create sequence teachers_seq;")
+        cur.execute("""create table teachers (
+                    id bigint primary key NOT NULL,
+                    department_id bigint NOT NULL,
+                    foreign key  (department_id) references  department (id),
+                    firstname varchar(50) NOT NULL,
+                    lastname varchar(50) NOT NULL ,
+                    fathername varchar(50) NOT NULL
+                    );""")
+        #cur.execute("create sequence subject_seq;")
+        cur.execute("""create table subject(
+                     id bigint primary key NOT NULL,
+                     name varchar(20) NOT NULL
+                     );""")
+        #cur.execute("create sequence subjects_to_teachers_seq;")
+        cur.execute("""create table subjects_to_teachers(
+                     id bigint primary key NOT NULL,
+                     teacher_id bigint NOT NULL,
+                     subject_id bigint NOT NULL,
+                     foreign key  (teacher_id) references teachers (id),
+                     foreign key  (subject_id) references  subject (id)
+                     );""")
+        self.conn.commit()
+    def getCursor(self):
+        return(self.conn.cursor())
+    def dropAllTables(self):
+        cur = self.conn.cursor()
+        print(cur)
+        cur.execute("drop table subjects_to_teachers;")
+        cur.execute("drop table subject;")
+        cur.execute("drop table teachers;")
+        cur.execute("drop table department;")
+        cur.execute("drop table faculties;")
+        self.conn.commit()
+    def execute(self,text):
+        cur = self.conn.cursor()
+        return(cur.execute(text))
+        self.conn.commit()
+        
 
 a = PostgresConnector()
-print("Done")
+#a.createDatabase()
+a.dropAllTables()
+#print(a.execute('select * from department;'))

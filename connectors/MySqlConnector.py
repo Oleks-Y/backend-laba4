@@ -67,9 +67,23 @@ class MySqlConnector(Connector):
                      foreign key  (subject_id) references  subject (id) \
                      )")
         pass
+    def getCursor(self):
+        return(self.conn.cursor())
+    def dropAllTables(self):
+        cur = self.conn.cursor()
+        cur.execute("drop table subjects_to_teachers")
+        cur.execute("drop table subject")
+        cur.execute("drop table teachers")
+        cur.execute("drop table department")
+        cur.execute("drop table faculties")
+    def execute(self,text):
+        cur = self.conn.cursor()
+        return(cur.execute(text))
+
+        
 
 
 a = MySqlConnector()
 #a.createDatabase()
-
-print("Done")
+a.dropAllTables()
+print(a.execute("SELECT * FROM teachers;"))

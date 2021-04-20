@@ -19,6 +19,15 @@ class Connector(metaclass =ABCMeta):
     @abstractmethod 
     def createDatabase(self): 
         pass
+    @abstractmethod 
+    def getCursor(self):
+        pass
+    @abstractmethod 
+    def dropAllTables(self):
+        pass
+    @abstractmethod 
+    def execute(self):
+        pass
 # class MySqlConnector(Connector): 
 
 
