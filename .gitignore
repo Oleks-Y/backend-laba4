@@ -1,0 +1,4 @@
+conf.ini
+.vscode/.ropeproject/config.py
+connectors/ads.py
+connectors/__pycache__/Connector.cpython-39.pyc
