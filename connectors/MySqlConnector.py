@@ -39,7 +39,6 @@ class MySqlConnector(Connector):
         cur.execute("create table faculties (\
                      id bigint primary key  auto_increment ,\
                      faculty_name varchar(20) not null ,\
-                     university_name varchar(50) not null\
                      );")
         cur.execute("create table department (\
                      id bigint primary key  auto_increment,\
@@ -85,5 +84,5 @@ class MySqlConnector(Connector):
 
 a = MySqlConnector()
 #a.createDatabase()
-a.dropAllTables()
+#a.dropAllTables()
 print(a.execute("SELECT * FROM teachers;"))

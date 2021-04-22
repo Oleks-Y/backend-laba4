@@ -43,7 +43,6 @@ class PostgresConnector(Connector):
         cur.execute("""create table faculties (
                     id bigint primary key NOT NULL,
                     faculty_name varchar(20) NOT NULL,
-                    university_name varchar(50) NOT NULL
                     );""")
         #cur.execute("create sequence department_seq;")
         cur.execute("""create table department (

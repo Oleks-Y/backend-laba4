@@ -17,7 +17,6 @@ class SqliteConnector(Connector):
         cursor.execute("""create table faculties (
                         id bigint primary key ,
                         faculty_name TEXT not null ,
-                        university_name TEXT not null
                         );
                     """)
         self.conn.commit()
@@ -53,8 +52,7 @@ class SqliteConnector(Connector):
                         foreign key  (subject_id) references  subject (id)
                         );
                     """)
-        self.conn.commit()
-        # Зберігаємо зміни       
+        self.conn.commit()  
         pass
     def getCursor(self):
         return(self.conn.cursor())

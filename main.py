@@ -6,136 +6,123 @@ import tkinter.ttk as ttk
 from tkinter import *
 from subprocess import Popen, PIPE
 from ctypes import windll
+from connectors.MySqlConnector import MySqlConnector
+from connectors.PostgresConnector import PostgresConnector
+from connectors.Sqlite import SqliteConnector
+from connectors.Connector import Connector
 
 
-connSQL = sqlite3.connect(":memory:")
-# connMYSQL = mysql.connector.connect(host = "0.0.0.0",    # your host, usually localhost
-#                      port = "3307",
-#                      user="root",         # your username
-#                      passwd="12345678",  # your password
-#                      db="mysql")        # name of the data base
+#sqlite = SqliteConnector()
+#sqlite.createDatabase()
+#sqlite.dropAllTables()
 
-with connect(
-        host="localhost",
-        port = "3307",
-        user="root",
-        password="12345678",
-    ) as connection:
-        print(connection)
-
-con = psycopg2.connect(
-  database = "postgres",
-  user="postgres", 
-  password="mysecretpassword", 
-  host="localhost", 
-  port="8012",
-)
-
-# conn = psycopg2.connect(dbname='postgres', user='postgres', 
-#                         password='mysecretpassword', host='0.0.0.0',port = '8012')
-
-print(connection)
-print(connSQL)
-print(con)
-
-def LengthValidate(*args):
-    try:
-        # Якщо введений діапазон більше 7, то встановлюємо значення 7
-        if int(ID.get()) > 7:
-            ID.delete(0, 'end')
-            ID.insert(0, 7)
-        # Якщо аведений діапазон менше 0, то встановлюємо значення 0
-        elif int(ID.get()) < 0:
-            ID.delete(0, 'end')
-            ID.insert(0, 0)
-    # Якщо аведене значення викликає ексепшн, то встановлюємо значення 0
-    except:
-        ID.delete(0, 'end')
-        ID.insert(0, 0)
-
-def Length2Validate(*args):
-    try:
-        # Якщо введений діапазон більше 9999, то встановлюємо значення 9999
-        if int(ID.get()) > 9999:
-            ID.delete(0, 'end')
-            ID.insert(0, 9999)
-        # Якщо аведений діапазон менше 0, то встановлюємо значення 0
-        elif int(ID.get()) < 0:
-            ID.delete(0, 'end')
-            ID.insert(0, 0)
-    # Якщо аведене значення викликає ексепшн, то встановлюємо значення 0
-    except:
-        ID.delete(0, 'end')
-        ID.insert(0, 0)
-
-root = Tk()
-# Встановлення параметрів, для того, щоб програма гарно виглядала на екранах із високим DPI
-windll.shcore.SetProcessDpiAwareness(1)
-
-# Встановлення підпису вікна
-root.title("Система для управління базами даних")
-# Встановлення розміру вікна
-root.geometry('700x600')
-# Заблоковуємо можливість зміни розміру вікна
-root.resizable(width=FALSE, height=FALSE)
-
-# Створюємо рамку для інструкції
-GeneralInfoFrame = Frame(root)
-
-ProgramFrame = Frame(root)
-ProgramFrame.pack(side=TOP, fill=Y, expand=1, pady=10)
-
-# generateNumbers = Button(ProgramFrame, font=("Arial", 14), text="Експорт БД1 у БД2", command=PostgreSQL, width=20)
-# generateNumbers.grid(row=2, column=0, columnspan=1)
-# generateNumbers = Button(ProgramFrame, font=("Arial", 14), text="Змінити запис в БД", width=20)
-# generateNumbers.bind("<Button-1>",lambda event: ChangeBD2(int(ID.get()),str(Name.get()),str(Date.get()),int(Number.get())))
-# generateNumbers.grid(row=8, column=0, columnspan=1)
-generateNumbers = Button(ProgramFrame, font=("Arial", 14), text="Експорт БД2 у БД3", width=20)
-# generateNumbers.bind("<Button-1>",lambda event: Createmysql(int(Numb.get())))
-generateNumbers.grid(row=10, column=0, columnspan=1)
-# generateNumbers = Button(ProgramFrame, font=("Arial", 14), text="Створити запит", width=20)
-# generateNumbers.bind("<Button-1>",lambda event: createsqliteCRUD(str(sql.get())))
-generateNumbers.grid(row=13, column=0, columnspan=1)
+#Postgres = PostgresConnector()
+#Postgres.createDatabase()
+#Postgres.dropAllTables()
 
 
+MySql = MySqlConnector()
+MySql.createDatabase()
+#MySql.dropAllTables()
 
-# Вивід рядка "ID:"
-Label(ProgramFrame, font=("Arial", 14), text="ID:") \
-    .grid(row=4, column=0, sticky="E")
+faculties = [(1, 'Faculty of Informatics and Computer Science'),
+            (2, 'Faculty of Applied Mathematics'),
+            (3, 'Faculty of Biomedical Engineering'),
+            (4, 'Faculty of Chemical Engineering'),
+            (5, 'Faculty of Electronics'),
+            (6, 'Faculty of heat power engineering'),
+            (7, 'Faculty of Instrumentation Engineering'),
+            (8, 'Faculty of Linguistics'),
+            (9, 'Faculty of Management and Marketing'),
+            (10, 'Faculty of Sociology and Law')]
 
-# Поле для вводу значень довжини списку
-ID = Spinbox(ProgramFrame, font=("Arial", 14), width=9, from_=1, to=8)
-ID.grid(row=4, column=1, sticky="W")
-# Якщо фокус на елементі був втсрачений, виконуємо перевірку введених значень
-ID.bind("<FocusOut>", LengthValidate)
+# departments = [(1, ),
+#             (2, ),
+#             (3, ),
+#             (4, ),
+#             (5, ),
+#             (6, ),
+#             (7, ),
+#             (8, ),
+#             (9, ),
+#             (10, )]
 
-Label(ProgramFrame, font=("Arial", 14), text="Назва товару:") \
-    .grid(row=5, column=0, sticky="E")
-Name = Entry(ProgramFrame, font=("Arial", 14), width=10)
-Name.grid(row=5, column=1, sticky="W")
-# Якщо фокус на елементі був втсрачений, виконуємо перевірку введених значень
+departments = [(1,'КТК',1 ),
+            (2,'PZKS',2 ),
+            (3,'DBC',3 ),
+            (4,'TPZA',4 ),
+            (5,'МЕ',5 ),
+            (6,'AESIITF',6 ),
+            (7,'VP',7 ),
+            (8,'KTPPAM',8 ),
+            (9,'KEP',9 ),
+            (10,'KGAP',10 ),
+            (11,'OT',1 ),
+            (12,'PMA',2 ),
+            (13,'DBE',3 ),
+            (14,'ERP',4 ),
+            (15,'EDS',5 ),
+            (16,'ATEP',6 ),
+            (17,'OOEP',7 ),
+            (18,'KTPPNM',8 ),
+            (19,'KM',9 ),
+            (20,'KS',10 )]
 
-# Вивід рядів для ввода даних :"
-Label(ProgramFrame, font=("Arial", 14), text="Строк придатності:") \
-    .grid(row=6, column=0, sticky="E")
-Date = Entry(ProgramFrame, font=("Arial", 14), width=10)
-Date.grid(row=6, column=1, sticky="W")
+teachers = [(1,1,'Serhij','Andrijovych','Zozulya' ),
+            (2,2,'Danylo','Herasymenko','Illich' ),
+            (3,3,'Ivan','Stetsyuk','Kostyantynovych' ),
+            (4,4,'Vadym','Kolesnyk','Heorhijovych' ),
+            (5,5,'Mykyta','Honcharuk','Kuzmych' ),
+            (6,6,'Bohdan','Palamarchuk','Tarasovych' ),
+            (7,7,'Yurij','Yanchuk','Romanovych' ),
+            (8,8,'Fedir','Levchuk','Vyacheslavovych' ),
+            (9,9,'Bronislav','Solovej','Kazymyrovych' ),
+            (10,10,'Henadij','Romanovych','Morhun' ), 
+            (11,11,'Serhij','Demchuk','Yaroslavovych' ), 
+            (12,12,'Vadym','Skrypnyk','Heorhijovych' ), 
+            (13,13,'Viktor','Bondarenko','Olehovych' ),
+            (14,14,'Oleh','Sushko','Danylovych' ), 
+            (15,15,'Volodymyr','Honcharuk','Ruslanovych' ), 
+            (16,16,'Pylyp','Yashchenko','Yurijovych' ),
+            (17,17,'Zynovij','Khomenko','Borysovych' ), 
+            (18,18,'Ihor','Palamarchuk','Oleksandrovych' ),
+            (19,19,'Kuzma','Yakymenko','Vasylovych' ),
+            (20,20,'Bohdan','Bilyk','Feodosijovych' )]
 
-Label(ProgramFrame, font=("Arial", 14), text="Кількість товару:") \
-    .grid(row=7, column=0, sticky="E")
-Number = Spinbox(ProgramFrame, font=("Arial", 14), width=9, from_=0, to=9999)
-Number.grid(row=7, column=1, sticky="W")
-# Якщо фокус на елементі був втсрачений, виконуємо перевірку введених значень
-Number.bind("<FocusOut>", Length2Validate)
+subjects = [(1, 'Accounting & Finance'),
+            (2, 'Art & Design'),
+            (3, 'Architecture'),
+            (4, 'Manufacturing Engineering'),
+            (5, 'Law'),
+            (6, 'Economics & Econometrics'),
+            (7, 'Medicine'),
+            (8, 'Business & Management Studies'),
+            (9, 'Engineering & Technology'),
+            (10,'Computer Science' )] 
 
-Label(ProgramFrame, font=("Arial", 14), text="З якого Рядка почати експорт :") \
-    .grid(row=9, column=0, sticky="E")
-Numb = Spinbox(ProgramFrame, font=("Arial", 14), width=9, from_=0, to=4)
-Numb.grid(row=9, column=1, sticky="W")
+subjects_to_teachers = [(1,1,1 ),
+            (2,2,2 ),
+            (3,3,3 ),
+            (4,4,4 ),
+            (5,5,5 ),
+            (6,6,6 ),
+            (7,7,7 ),
+            (8,8,8 ),
+            (9,9,9 ),
+            (10,10,10 ),
+            (11,11,1 ),
+            (12,12,2 ),
+            (13,13,3 ),
+            (14,14,4 ),
+            (15,15,5 ),
+            (16,16,6 ),
+            (17,17,7 ),
+            (18,18,8 ),
+            (19,19,9 ),
+            (20,20,10 )]
 
-Label(ProgramFrame, font=("Arial", 14), text="SQL Запити:") \
-    .grid(row=11, column=0, sticky="E")
-sql = Entry(ProgramFrame, font=("Arial", 14), width=50)
-sql.grid(row=12, column=0, sticky="W")
-
-root.mainloop()
+MySql.execute("INSERT INTO faculties VALUES (?,?)", faculties)
+MySql.execute("INSERT INTO department VALUES (?,?,?)", departments)
+MySql.execute("INSERT INTO teachers VALUES (?,?,?,?,?)", teachers)
+MySql.execute("INSERT INTO subject VALUES (?,?)", subjects)
+MySql.execute("INSERT INTO subjects_to_teachers VALUES (?,?,?)", subjects_to_teachers)
