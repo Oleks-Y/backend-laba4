@@ -25,6 +25,7 @@ MySql = MySqlConnector()
 MySql.createDatabase()
 #MySql.dropAllTables()
 
+
 faculties = [(1, 'Faculty of Informatics and Computer Science'),
             (2, 'Faculty of Applied Mathematics'),
             (3, 'Faculty of Biomedical Engineering'),

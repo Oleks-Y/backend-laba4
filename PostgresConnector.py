@@ -2,39 +2,20 @@ import psycopg2
 from Connector import Connector
 import configparser
 
+
 class PostgresConnector(Connector):
     def __init__(self):
         super().__init__()
-        config = configparser.ConfigParser()
-        config.read_file(open("conf.ini", "r"))
-        if not "Postgres" in config:
-            raise Exception("Please specify Postgres config")
-        dbConf = config["Postgres"]
-        # dsn = 'host={dbConf["Host"]} dbname={dbConf["Database"]} user={dbConf["User"]} password={dbConf["Password"]}'
-        dsn = "host={} dbname={} user={} password={}".format(dbConf["Host"], dbConf["Database"], dbConf["User"],dbConf["Password"])
-        print(dbConf["User"])
         self.conn = psycopg2.connect(
-                                      database = dbConf["Database"],
-                                      user=dbConf["User"], 
-                                      password=dbConf["Password"], 
-                                      host=dbConf["Host"], 
-                                      port=dbConf["Port"],
-                                    )
+            database="university",
+            user="prepod",
+            password="12345678",
+            host="0.0.0.0",
+            port=8012
+                    )
         cur = self.conn.cursor()
 
         #cur.execute("create sequence faculties_seq;")
-
-    def select(self, fields, table, query):
-        pass
-
-    def insert(self, data, table):
-        pass
-
-    def update(self, data, table, query):
-        pass
-
-    def delete(self, table, query):
-        pass
 
     def createDatabase(self):
         cur = self.conn.cursor()
@@ -74,8 +55,10 @@ class PostgresConnector(Connector):
                      foreign key  (subject_id) references  subject (id)
                      );""")
         self.conn.commit()
+
     def getCursor(self):
         return(self.conn.cursor())
+
     def dropAllTables(self):
         cur = self.conn.cursor()
         print(cur)
@@ -85,13 +68,53 @@ class PostgresConnector(Connector):
         cur.execute("drop table department;")
         cur.execute("drop table faculties;")
         self.conn.commit()
-    def execute(self,text):
+
+    def execute(self, text):
         cur = self.conn.cursor()
         return(cur.execute(text))
         self.conn.commit()
-        
+    def exportTo(self, connector: Connector):
+        cur = self.conn.cursor()
+        data = self._getAllTablesData(cur)
+        connector.importData(data)
 
-a = PostgresConnector()
-#a.createDatabase()
-a.dropAllTables()
-#print(a.execute('select * from department;'))
+    def importData(self, data: dict):
+        cur = self.getCursor()
+        for table in data.keys():
+            print(f'Inserting into table {table} values {data[table]}')
+            cur.execute(f"SELECT COUNT(*) FROM {table}")
+            rawCount = cur.fetchone()[0]
+            if data[table] == []:
+                continue
+            string = "(" + ",".join(["%s" for value in data[table][0]]) + ")"
+            query = f"INSERT INTO {table} VALUES {string}"
+            for raw in data[table]:
+                rawCount+=1
+                rawList = list(raw)
+                rawList[0]=rawCount
+                cur.execute(query,rawList)
+            print(f"Insert Into {table} Done ")
+            self.conn.commit()
+    def _getAllTablesData(self, cur):
+        cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;")
+        # cur.execute("Select * from faculties")
+        tables = cur.fetchall()
+        print("Tables :",tables)
+        data = {}
+        for table in tables:
+            tableName = table[0]
+            cur.execute(f"select * from {tableName}")
+            raws = cur.fetchall()
+            data[tableName] = raws
+        return data
+
+
+if __name__=="__main__":
+    a = PostgresConnector()
+    # a.createDatabase()
+    # a.dropAllTables()
+    # print(a.execute("SELECT * FROM teachers;"))
+    cur = a.getCursor()
+    data = a._getAllTablesData(cur)
+    a.importData(data)
+    print('Done')

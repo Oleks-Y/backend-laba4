@@ -7,31 +7,14 @@ import configparser
 class MySqlConnector(Connector):
     def __init__(self):
         super().__init__()
-        config = configparser.ConfigParser()
-        config.read_file(open("conf.ini", "r"))
-        if not 'MySql' in config:
-           raise Exception("Please specify Postgres config")
-        dbConf = config["MySql"]
-        self.conn = pymysql.connect(user='root',
-                                    database=dbConf["database"],
+        self.conn = pymysql.connect(user='blyat',
                                     password='12345678',
-                                    host=dbConf["host"],
-                                    port=int(dbConf["port"]),
+                                    host='0.0.0.0',
+                                    db='univercity',
+                                    port=3307,
                                     charset='utf8mb4',
-                                    cursorclass=DictCursor,
+                                    # cursorclass=DictCursor,
                                     )
-        pass
-
-    def select(self, fields, table, query):
-        pass
-
-    def insert(self, data, table):
-        pass
-
-    def update(self, data, table, query):
-        pass
-
-    def delete(self, table, query):
         pass
 
     def createDatabase(self):
@@ -66,8 +49,10 @@ class MySqlConnector(Connector):
                      foreign key  (subject_id) references  subject (id) \
                      )")
         pass
+
     def getCursor(self):
         return(self.conn.cursor())
+
     def dropAllTables(self):
         cur = self.conn.cursor()
         cur.execute("drop table subjects_to_teachers")
@@ -75,14 +60,48 @@ class MySqlConnector(Connector):
         cur.execute("drop table teachers")
         cur.execute("drop table department")
         cur.execute("drop table faculties")
-    def execute(self,text):
+
+    def execute(self, text: str):
         cur = self.conn.cursor()
         return(cur.execute(text))
 
-        
+    def exportTo(self, connector: Connector):
+        cur = self.conn.cursor()
+        data = self._getAllTablesData(cur)
+        connector.importData(data)
+
+    def importData(self, data: dict):
+        cur = self.getCursor()
+        for table in data.keys():
+            print(f'Inserting into table {table} values {data[table]}')
+            rawCount = cur.execute(f"SELECT * FROM {table}")
+            if data[table] == ():
+                continue
+            string = "(" + ",".join(["%s" for value in data[table][0]]) + ")"
+            query = f"INSERT INTO {table} VALUES {string}"
+            for raw in data[table]:
+                rawCount+=1
+                rawList = list(raw)
+                rawList[0]=rawCount
+                cur.execute(query,rawList)  # data[table])
+    def _getAllTablesData(self, cur):
+        cur.execute("SHOW TABLES;")
+        tables = cur.fetchall()
+        print(tables)
+        data = {}
+        for table in tables:
+            tableName = table[0]
+            cur.execute(f"select * from {tableName}")
+            raws = cur.fetchall()
+            data[tableName] = raws
+        return data
 
 
-a = MySqlConnector()
-#a.createDatabase()
-#a.dropAllTables()
-print(a.execute("SELECT * FROM teachers;"))
+if __name__=="main":
+    a = MySqlConnector()
+    # a.createDatabase()
+    # a.dropAllTables()
+    # print(a.execute("SELECT * FROM teachers;"))
+    cur = a.getCursor()
+    data = a._getAllTablesData(cur)
+    a.importData(data)

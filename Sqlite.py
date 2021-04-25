@@ -1,17 +1,11 @@
 import sqlite3
 from Connector import Connector
 
-class SqliteConnector(Connector): 
-    def __init__(self): 
+
+class SqliteConnector(Connector):
+    def __init__(self):
         self.conn = sqlite3.connect(":memory:")
-    def select(self, fields, table, query):
-        pass 
-    def insert(self, data, table):
-        pass 
-    def update(self, data, table, query):
-        pass 
-    def delete(self, table, query):
-        pass
+
     def createDatabase(self):
         cursor = self.conn.cursor()
         cursor.execute("""create table faculties (
@@ -52,10 +46,12 @@ class SqliteConnector(Connector):
                         foreign key  (subject_id) references  subject (id)
                         );
                     """)
-        self.conn.commit()  
+        self.conn.commit()
         pass
+
     def getCursor(self):
         return(self.conn.cursor())
+
     def dropAllTables(self):
         cur = self.conn.cursor()
         cur.execute("drop table subjects_to_teachers;")
@@ -63,10 +59,12 @@ class SqliteConnector(Connector):
         cur.execute("drop table teachers;")
         cur.execute("drop table department;")
         cur.execute("drop table faculties;")
-    def execute(self,text):
+
+    def execute(self, text):
         cur = self.conn.cursor()
         return(cur.execute(text))
-
+    def changeRaw():
+        pass
 a = SqliteConnector()
 a.createDatabase()
 a.dropAllTables()
