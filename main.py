@@ -12,19 +12,9 @@ from connectors.Sqlite import SqliteConnector
 from connectors.Connector import Connector
 
 
-#sqlite = SqliteConnector()
-#sqlite.createDatabase()
-#sqlite.dropAllTables()
-
-#Postgres = PostgresConnector()
-#Postgres.createDatabase()
-#Postgres.dropAllTables()
-
 
 MySql = MySqlConnector()
 MySql.createDatabase()
-#MySql.dropAllTables()
-
 
 faculties = [(1, 'Faculty of Informatics and Computer Science'),
             (2, 'Faculty of Applied Mathematics'),
@@ -36,17 +26,6 @@ faculties = [(1, 'Faculty of Informatics and Computer Science'),
             (8, 'Faculty of Linguistics'),
             (9, 'Faculty of Management and Marketing'),
             (10, 'Faculty of Sociology and Law')]
-
-# departments = [(1, ),
-#             (2, ),
-#             (3, ),
-#             (4, ),
-#             (5, ),
-#             (6, ),
-#             (7, ),
-#             (8, ),
-#             (9, ),
-#             (10, )]
 
 departments = [(1,'КТК',1 ),
             (2,'PZKS',2 ),
@@ -122,8 +101,10 @@ subjects_to_teachers = [(1,1,1 ),
             (19,19,9 ),
             (20,20,10 )]
 
-MySql.execute("INSERT INTO faculties VALUES (?,?)", faculties)
-MySql.execute("INSERT INTO department VALUES (?,?,?)", departments)
-MySql.execute("INSERT INTO teachers VALUES (?,?,?,?,?)", teachers)
-MySql.execute("INSERT INTO subject VALUES (?,?)", subjects)
-MySql.execute("INSERT INTO subjects_to_teachers VALUES (?,?,?)", subjects_to_teachers)
+
+def createDB():
+    MySql.executemany("INSERT INTO faculties VALUES (?,?)", faculties)
+    MySql.executemany("INSERT INTO department VALUES (?,?,?)", departments)
+    MySql.executemany("INSERT INTO teachers VALUES (?,?,?,?,?)", teachers)
+    MySql.executemany("INSERT INTO subject VALUES (?,?)", subjects)
+    MySql.executemany("INSERT INTO subjects_to_teachers VALUES (?,?,?)", subjects_to_teachers)
